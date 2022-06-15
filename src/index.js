@@ -50,18 +50,12 @@ function renderItem(data) {
   //   const markup = countryMarkup(country[0]);
   //   refs.countryInfo.innerHTML = markup;
 }
-
-function itemMarkup({
-  largeImageURL,
-  tags,
-  likes,
-  views,
-  comments,
-  downloads,
-}) {
+// largeImageURL
+// webformatURL;
+function itemMarkup({ webformatURL, tags, likes, views, comments, downloads }) {
   return `
         <div class="photo-card">
-  <img src="${largeImageURL}" alt="${tags}" loading="lazy" />
+  <img class="card-image" src="${webformatURL}" alt="${tags}" loading="lazy" />
   <div class="info">
     <p class="info-item">
     ${likes}
