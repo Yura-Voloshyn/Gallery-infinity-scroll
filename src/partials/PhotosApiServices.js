@@ -1,9 +1,13 @@
+import axios from 'axios';
+import { data } from 'infinite-scroll';
+const BASE_URL = 'https://pixabay.com/api/';
+
 export default class PhotosApiServices {
   constructor() {
     this.searchQuery = '';
     this.page = 1;
   }
-  fetchPhotos() {
+  async fetchPhotos() {
     const options = {
       key: '28041992-97fcb2b6c34f200cd634916b7',
       q: '',
@@ -14,21 +18,19 @@ export default class PhotosApiServices {
       per_page: 40,
     };
 
-    const BASE_URL = 'https://pixabay.com/api/';
-
     const url = `${BASE_URL}?key=${options.key}&q=${this.searchQuery}&image_type=${options.image_type}&orientation=${options.orientation}&safesearch=${options.safesearch}&page=${this.page}&per_page=${options.per_page}`;
 
-    return (
-      fetch(url, options)
-        .then(resp => {
-          this.page += 1;
-          return resp.json();
-        })
-        //   .then(r => {
-        //     this.page += 1;
-        //   })
-        .catch(error => console.log(error))
-    );
+    return await axios
+      .get(url, options)
+      .then(resp => {
+        this.page += 1;
+        //   console.log(resp.data);
+        return resp.data;
+      })
+      //   .then(r => {
+      //     this.page += 1;
+      //   })
+      .catch(error => console.log(error));
   }
 
   resetPage() {

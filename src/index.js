@@ -1,15 +1,23 @@
 import PhotosApiServices from './partials/PhotosApiServices';
 
 import { Notify } from 'notiflix';
-import axios from 'axios';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import { data } from 'infinite-scroll';
 
-const BASE_URL = 'https://pixabay.com/api/';
-const API_KEY = '28041992-97fcb2b6c34f200cd634916b7';
+Notify.init({ position: 'center-top', distance: '60px' });
+
+// let infScroll = new InfiniteScroll(refs.gallery, {
+//   // options
+//   path: 'photosApiServices.page + 1',
+//   append: '.post',
+//   history: false,
+//   scrollThreshold: 100,
+// });
+// console.log(infScroll);
 
 const photosApiServices = new PhotosApiServices();
-
+console.log(photosApiServices.page);
 const refs = {
   gallery: document.querySelector('.gallery'),
   form: document.querySelector('.search-form'),
@@ -17,56 +25,85 @@ const refs = {
   btn: document.querySelector('.submit-btn'),
   loadMoreBtn: document.querySelector('.load-more'),
 };
-
+// console.log(photosApiServices);
 refs.form.addEventListener('submit', onBtnSubmit);
 
-function onBtnSubmit(e) {
+async function onBtnSubmit(e) {
   e.preventDefault();
 
   clearGallety();
   photosApiServices.query = e.currentTarget.elements.searchQuery.value;
-
   photosApiServices.resetPage();
-  if (data.hits === 0) {
+
+  const data = await photosApiServices.fetchPhotos();
+  const markup = data.hits.map(item => itemMarkup(item)).join('');
+  // console.log(data);
+  if (data.total === 0) {
+    btnToTop.classList.add('is-hiden');
+    btnToBot.classList.add('is-hiden');
+    refs.loadMoreBtn.classList.add('is-hiden');
     return Notify.warning(
       'Sorry, there are no images matching your search query. Please try again.'
     );
   }
   if (photosApiServices.query === '' || photosApiServices.query === ' ') {
+    btnToTop.classList.add('is-hiden');
+    btnToBot.classList.add('is-hiden');
+    refs.loadMoreBtn.classList.add('is-hiden');
     return Notify.warning('input field cannot be empty.');
-  }
-
-  photosApiServices.fetchPhotos().then(data => {
-    const markup = data.hits.map(item => itemMarkup(item)).join('');
+  } else {
     renderItem(markup);
     Notify.success(`Hooray! We found ${data.totalHits} images.`);
-    refs.loadMoreBtn.classList.remove('is-hiden');
-  });
+    document;
+  }
+  //   if else (page > totalHits) {
+  //       Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.")
+  //   }
 }
 
 refs.loadMoreBtn.addEventListener('click', loadMore);
 
-function loadMore(e) {
+async function loadMore(e) {
   e.preventDefault();
-  //   console.log('click');
-  photosApiServices.fetchPhotos().then(data => {
-    const markup = data.hits.map(item => itemMarkup(item)).join('');
-    renderItem(markup);
-  });
+  console.log(photosApiServices.page);
+  const data = await photosApiServices.fetchPhotos();
+  const markup = data.hits.map(item => itemMarkup(item)).join('');
+
+  renderItem(markup);
+  const totalPages = Math.ceil(data.totalHits / 40);
+  console.log(totalPages);
+  console.log(data);
+  if (photosApiServices.page > totalPages) {
+    refs.loadMoreBtn.classList.add('is-hiden');
+    Notify.failure(
+      "We're sorry, but you've reached the end of search results."
+    );
+  }
 }
 
-function photoApiFetch() {}
+// let infScroll = new InfiniteScroll(refs.gallery, {
+//   // options
+//   path: photosApiServices.page,
+//   append: '.post',
+//   history: false,
+// });
+
+// console.log(infScroll);
+
+// function photoApiFetch() {}
 // refs.gallery.addEventListener('beforeend', markup)
 function renderItem(markup) {
-  {
-    refs.gallery.insertAdjacentHTML('beforeend', markup);
-    const lightbox = new SimpleLightbox('.gallery a', {
-      captionDelay: 250,
-      captionsData: 'alt',
-    });
-    lightbox.refresh();
-    refs.gallery.addEventListener('click', lightbox);
-  }
+  btnToTop.classList.remove('is-hiden');
+  btnToBot.classList.remove('is-hiden');
+  refs.loadMoreBtn.classList.remove('is-hiden');
+
+  refs.gallery.insertAdjacentHTML('beforeend', markup);
+  const lightbox = new SimpleLightbox('.gallery a', {
+    captionDelay: 250,
+    captionsData: 'alt',
+  }).refresh();
+  //   lightbox.refresh();
+  refs.gallery.addEventListener('click', lightbox);
 }
 // largeImageURL
 // webformatURL;
@@ -106,3 +143,59 @@ function itemMarkup({
 function clearGallety() {
   refs.gallery.innerHTML = '';
 }
+
+const btnToTop = document.querySelector('.top-btn');
+const btnToBot = document.querySelector('.bot-btn');
+
+btnToTop.addEventListener('click', onScrollUp);
+btnToBot.addEventListener('click', onScrollDown);
+
+function onScrollUp() {
+  const photoCard = document.querySelector('.photo-card');
+  const { height: cardHeight } = photoCard.getBoundingClientRect();
+  if (!photoCard) {
+    return;
+  } else {
+    window.scrollBy({
+      top: -cardHeight * 2,
+      behavior: 'smooth',
+    });
+  }
+}
+
+function onScrollDown() {
+  const photoCard = document.querySelector('.photo-card');
+  const { height: cardHeight } = photoCard.getBoundingClientRect();
+  if (!photoCard) {
+    return;
+  } else {
+    window.scrollBy({
+      top: cardHeight * 2,
+      behavior: 'smooth',
+    });
+  }
+}
+// function checkScrollDirection(event) {
+//   const { height: cardHeight } = document
+//     .querySelector('.galllery')
+//     .document.querySelector('.photo-card')
+//     .getBoundingClientRect();
+//   if (checkScrollDirectionIsUp(event)) {
+//     window.scrollBy({
+//       down: cardHeight * 2,
+//       behavior: 'smooth',
+//     });
+//     console.log('UP');
+//   } else {
+//     window.scrollBy({
+//       down: -cardHeight * 2,
+//       behavior: 'smooth',
+//     });
+//   }
+// }
+// function checkScrollDirectionIsUp(event) {
+//   if (event.wheelDelta) {
+//     return event.wheelDelta > 0;
+//   }
+//   return event.deltaY < 0;
+// }

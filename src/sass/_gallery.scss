@@ -2,7 +2,9 @@
     --timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     --animation-duration: 250ms;
 }
-
+.gallery-container {
+    padding-bottom: 20px;
+}
 .gallery {
     display: flex;
     flex-wrap: wrap;
@@ -12,6 +14,8 @@
     list-style: none;
     margin-left: auto;
     margin-right: auto;
+    padding-top: 50px;
+
 }
 
 
@@ -25,14 +29,18 @@
     width: 100%;
     object-fit: cover;
     transition: transform var(--animation-duration) var(--timing-function);
+    border-radius: 4px 4px 0px 0px;
 }
 
 .photo-card {
     display: block;
     // object-fit: contain;
+    border-radius: 4px;
     text-decoration: none;
+    min-width: 300px;
+    flex-basis: 20%;
     // height: 400px;
-    width: calc((100% - 4 * 30px) / 4);
+    // width: calc((100% - 4 * 30px) / 4);
     margin: 12px;
         position: relative;
             box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
@@ -53,7 +61,11 @@
 }
 
 .info-item {
+    display: flex;
+    flex-direction: column;
     justify-content: space-between;
+    margin-left: auto;
+    margin-right: auto;
     font-size: 12px;
 }
 
