@@ -4,9 +4,28 @@ import { Notify } from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { data } from 'infinite-scroll';
+import debounce from 'lodash.debounce';
 
 Notify.init({ position: 'center-top', distance: '60px' });
 
+const DEBOUNCE_DELAY = 500;
+
+console.log(document.documentElement.scrollHeight);
+
+window.addEventListener('scroll', debounce(scrollOptions, DEBOUNCE_DELAY));
+
+function scrollOptions() {
+  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+  //   console.log({ scrollTop, scrollHeight, clientHeight });
+
+  if (clientHeight + scrollTop >= scrollHeight - 5) {
+    // show the loading animation
+    console.log('end of scroll');
+    loadMore();
+  }
+}
+window.removeEventListener('scroll', scrollOptions);
 // let infScroll = new InfiniteScroll(refs.gallery, {
 //   // options
 //   path: 'photosApiServices.page + 1',
@@ -17,7 +36,7 @@ Notify.init({ position: 'center-top', distance: '60px' });
 // console.log(infScroll);
 
 const photosApiServices = new PhotosApiServices();
-console.log(photosApiServices.page);
+// console.log(photosApiServices.page);
 const refs = {
   gallery: document.querySelector('.gallery'),
   form: document.querySelector('.search-form'),
@@ -61,20 +80,21 @@ async function onBtnSubmit(e) {
   //   }
 }
 
-refs.loadMoreBtn.addEventListener('click', loadMore);
+// refs.loadMoreBtn.addEventListener('click', loadMore);
 
 async function loadMore(e) {
-  e.preventDefault();
-  console.log(photosApiServices.page);
+  //   e.preventDefault();
+  //   console.log(photosApiServices.page);
   const data = await photosApiServices.fetchPhotos();
   const markup = data.hits.map(item => itemMarkup(item)).join('');
 
   renderItem(markup);
   const totalPages = Math.ceil(data.totalHits / 40);
-  console.log(totalPages);
-  console.log(data);
+  //   console.log(totalPages);
+  //   console.log(data);
   if (photosApiServices.page > totalPages) {
-    refs.loadMoreBtn.classList.add('is-hiden');
+    // refs.loadMoreBtn.classList.add('is-hiden');
+    lightbox.refresh();
     Notify.failure(
       "We're sorry, but you've reached the end of search results."
     );
@@ -92,16 +112,18 @@ async function loadMore(e) {
 
 // function photoApiFetch() {}
 // refs.gallery.addEventListener('beforeend', markup)
+const lightbox = new SimpleLightbox('.gallery a', {
+  captionDelay: 250,
+  captionsData: 'alt',
+});
+
 function renderItem(markup) {
   btnToTop.classList.remove('is-hiden');
   btnToBot.classList.remove('is-hiden');
-  refs.loadMoreBtn.classList.remove('is-hiden');
+  //   refs.loadMoreBtn.classList.remove('is-hiden');
 
   refs.gallery.insertAdjacentHTML('beforeend', markup);
-  const lightbox = new SimpleLightbox('.gallery a', {
-    captionDelay: 250,
-    captionsData: 'alt',
-  }).refresh();
+  lightbox.refresh();
   //   lightbox.refresh();
   refs.gallery.addEventListener('click', lightbox);
 }
