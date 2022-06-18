@@ -129,7 +129,7 @@ function renderItem(markup) {
   loadAnimationAction.classList.remove('is-hiden');
   setTimeout(() => {
     loadAnimationAction.classList.add('is-hiden');
-  }, 1500);
+  }, 2000);
   //   refs.loadMoreBtn.classList.remove('is-hiden');
 
   refs.gallery.insertAdjacentHTML('beforeend', markup);
