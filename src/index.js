@@ -34,7 +34,7 @@ window.removeEventListener('scroll', scrollOptions);
 //   scrollThreshold: 100,
 // });
 // console.log(infScroll);
-
+let timerId = null;
 const photosApiServices = new PhotosApiServices();
 // console.log(photosApiServices.page);
 const refs = {
@@ -44,6 +44,8 @@ const refs = {
   btn: document.querySelector('.submit-btn'),
   loadMoreBtn: document.querySelector('.load-more'),
 };
+const loadAnimationAction = document.querySelector('.loader');
+console.log(loadAnimationAction);
 // console.log(photosApiServices);
 refs.form.addEventListener('submit', onBtnSubmit);
 
@@ -60,7 +62,7 @@ async function onBtnSubmit(e) {
   if (data.total === 0) {
     btnToTop.classList.add('is-hiden');
     btnToBot.classList.add('is-hiden');
-    refs.loadMoreBtn.classList.add('is-hiden');
+    // refs.loadMoreBtn.classList.add('is-hiden');
     return Notify.warning(
       'Sorry, there are no images matching your search query. Please try again.'
     );
@@ -68,10 +70,13 @@ async function onBtnSubmit(e) {
   if (photosApiServices.query === '' || photosApiServices.query === ' ') {
     btnToTop.classList.add('is-hiden');
     btnToBot.classList.add('is-hiden');
-    refs.loadMoreBtn.classList.add('is-hiden');
+    // refs.loadMoreBtn.classList.add('is-hiden');
     return Notify.warning('input field cannot be empty.');
   } else {
     renderItem(markup);
+
+    // setTimeout(renderItem(markup), 2000);
+
     Notify.success(`Hooray! We found ${data.totalHits} images.`);
     document;
   }
@@ -115,16 +120,22 @@ async function loadMore(e) {
 const lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
   captionsData: 'alt',
-});
+}).refresh();
 
 function renderItem(markup) {
   btnToTop.classList.remove('is-hiden');
   btnToBot.classList.remove('is-hiden');
+
+  loadAnimationAction.classList.remove('is-hiden');
+  setTimeout(() => {
+    loadAnimationAction.classList.add('is-hiden');
+  }, 1500);
   //   refs.loadMoreBtn.classList.remove('is-hiden');
 
   refs.gallery.insertAdjacentHTML('beforeend', markup);
   lightbox.refresh();
   //   lightbox.refresh();
+
   refs.gallery.addEventListener('click', lightbox);
 }
 // largeImageURL
@@ -197,6 +208,14 @@ function onScrollDown() {
     });
   }
 }
+// loadAnimation();
+// function loadAnimation() {
+
+//   timerId = setTimeout(() => {
+//     console.log('lets party started');
+//     loadAnimationAction.classList.remove('.is-hiden');
+//   }, 1000);
+// }
 // function checkScrollDirection(event) {
 //   const { height: cardHeight } = document
 //     .querySelector('.galllery')
