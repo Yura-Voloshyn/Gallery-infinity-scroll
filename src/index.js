@@ -10,7 +10,7 @@ Notify.init({ position: 'center-top', distance: '60px' });
 
 const DEBOUNCE_DELAY = 500;
 
-console.log(document.documentElement.scrollHeight);
+// console.log(document.documentElement.scrollHeight);
 
 window.addEventListener('scroll', debounce(scrollOptions, DEBOUNCE_DELAY));
 
@@ -45,7 +45,7 @@ const refs = {
   loadMoreBtn: document.querySelector('.load-more'),
 };
 const loadAnimationAction = document.querySelector('.loader');
-console.log(loadAnimationAction);
+// console.log(loadAnimationAction);
 // console.log(photosApiServices);
 refs.form.addEventListener('submit', onBtnSubmit);
 
@@ -56,8 +56,11 @@ async function onBtnSubmit(e) {
   photosApiServices.query = e.currentTarget.elements.searchQuery.value;
   photosApiServices.resetPage();
 
+  loadAnimationAction.classList.remove('is-hiden');
   const data = await photosApiServices.fetchPhotos();
   const markup = data.hits.map(item => itemMarkup(item)).join('');
+  loadAnimationAction.classList.add('is-hiden');
+
   // console.log(data);
   if (data.total === 0) {
     btnToTop.classList.add('is-hiden');
@@ -74,7 +77,7 @@ async function onBtnSubmit(e) {
     return Notify.warning('input field cannot be empty.');
   } else {
     renderItem(markup);
-
+    // loadAnimationAction.classList.add('is-hiden');
     // setTimeout(renderItem(markup), 2000);
 
     Notify.success(`Hooray! We found ${data.totalHits} images.`);
@@ -90,8 +93,10 @@ async function onBtnSubmit(e) {
 async function loadMore(e) {
   //   e.preventDefault();
   //   console.log(photosApiServices.page);
+  loadAnimationAction.classList.remove('is-hiden');
   const data = await photosApiServices.fetchPhotos();
   const markup = data.hits.map(item => itemMarkup(item)).join('');
+  loadAnimationAction.classList.add('is-hiden');
 
   renderItem(markup);
   const totalPages = Math.ceil(data.totalHits / 40);
@@ -126,13 +131,14 @@ function renderItem(markup) {
   btnToTop.classList.remove('is-hiden');
   btnToBot.classList.remove('is-hiden');
 
-  loadAnimationAction.classList.remove('is-hiden');
-  setTimeout(() => {
-    loadAnimationAction.classList.add('is-hiden');
-  }, 2000);
+  //   loadAnimationAction.classList.remove('is-hiden');
+  //   setTimeout(() => {
+  //     loadAnimationAction.classList.add('is-hiden');
+  //   }, 2000);
   //   refs.loadMoreBtn.classList.remove('is-hiden');
 
   refs.gallery.insertAdjacentHTML('beforeend', markup);
+  //   loadAnimationAction.classList.add('is-hiden');
   lightbox.refresh();
   //   lightbox.refresh();
 

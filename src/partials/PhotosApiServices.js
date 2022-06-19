@@ -24,6 +24,7 @@ export default class PhotosApiServices {
       .get(url, options)
       .then(resp => {
         this.page += 1;
+
         //   console.log(resp.data);
         return resp.data;
       })
