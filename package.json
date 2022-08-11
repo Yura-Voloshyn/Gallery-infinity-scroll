@@ -2,10 +2,10 @@
   "name": "parcel-project-template",
   "version": "2.0.0",
   "description": "",
-  "homepage": "https://yura-voloshyn.github.io/Gallery-infinity-scrol/",
+  "homepage": "https://yura-voloshyn.github.io/Gallery-infinity-scroll/",
   "scripts": {
     "start": "parcel src/*.html",
-    "build": "parcel build src/*.html --public-url /Gallery-infinity-scrol/"
+    "build": "parcel build src/*.html --public-url /Gallery-infinity-scroll/"
   },
   "repository": {
     "type": "git",
