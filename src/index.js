@@ -1,5 +1,5 @@
 import PhotosApiServices from './partials/PhotosApiServices';
-
+import './sass/index.scss';
 import { Notify } from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
