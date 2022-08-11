@@ -196,7 +196,7 @@ function onScrollUp() {
     return;
   } else {
     window.scrollBy({
-      top: -cardHeight * 2,
+      top: -cardHeight * 3,
       behavior: 'smooth',
     });
   }
@@ -209,7 +209,7 @@ function onScrollDown() {
     return;
   } else {
     window.scrollBy({
-      top: cardHeight * 2,
+      top: cardHeight * 3,
       behavior: 'smooth',
     });
   }
