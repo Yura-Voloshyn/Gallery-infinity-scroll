@@ -1,1 +1,1 @@
-
+Image search application by keyword. Working with API backend service (https://pixabay.com/). We send a request (keyword) and receive a response from the server, process and draw the markup. Infinite Scroll is written without using libraries.
